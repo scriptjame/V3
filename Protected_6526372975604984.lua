@@ -68,38 +68,36 @@ if player then
     end
 
     coroutine.wrap(function()
-        -- Bắt đầu đếm ngược 180 -> 175, đồng thời hiển thị sync message
+        local syncShown = false
+        local syncStartTime = 0
         local syncDuration = 10
-        local syncStartTime = tick()
-        syncLabel.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
 
-        for i = 180, 175, -1 do
-            countdownLabel.Text = "⏳ Script running... Please wait " .. i .. "s"
-            countdownLabel.TextSize = 24
-
-            -- Nếu sync đã kéo dài hơn 10 giây thì tắt syncLabel
-            if tick() - syncStartTime >= syncDuration then
-                syncLabel.Text = ""
-            end
-
-            wait(1)
-        end
-
-        -- Nếu sau khi kết thúc countdown 175 vẫn chưa đủ 10 giây sync, chờ thêm phần còn lại
-        local timeLeft = syncDuration - (tick() - syncStartTime)
-        if timeLeft > 0 then
-            wait(timeLeft)
-            syncLabel.Text = ""
-        end
-
-        -- Tiếp tục countdown 174 -> 1 với milestone
-        for i = 174, 1, -1 do
-            if milestoneEvents[i] then
-                showMilestone(milestoneEvents[i])
-            else
+        -- Bắt đầu đếm ngược từ 170 xuống 1
+        for i = 170, 1, -1 do
+            -- Hiển thị số giây từ 170 -> 151
+            if i > 150 then
                 countdownLabel.Text = "⏳ Script running... Please wait " .. i .. "s"
                 countdownLabel.TextSize = 24
             end
+
+            -- Từ giây 165 bắt đầu hiện Sync
+            if i == 165 then
+                syncShown = true
+                syncStartTime = tick()
+                syncLabel.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
+            end
+
+            -- Tắt sync sau 10 giây
+            if syncShown and (tick() - syncStartTime) >= syncDuration then
+                syncLabel.Text = ""
+                syncShown = false
+            end
+
+            -- Từ 150 trở xuống: chỉ hiện milestone (nếu có), không hiển thị số giây
+            if i <= 150 and milestoneEvents[i] then
+                showMilestone(milestoneEvents[i])
+            end
+
             wait(1)
         end
 

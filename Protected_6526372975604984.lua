@@ -36,7 +36,6 @@ if player then
         [5]   = "🔥 Your power is ready... Unleash the fury!"
     }
 
-    -- Hiển thị thông báo milestone với hiệu ứng phóng to thu nhỏ
     local function showMilestone(text)
         for i = 20, 14, -1 do
             label.TextSize = i
@@ -50,7 +49,7 @@ if player then
             wait(0.01)
         end
 
-        wait(4) -- giữ thông báo lâu hơn 4 giây
+        wait(4)
 
         for i = 22, 20, -1 do
             label.TextSize = i
@@ -58,11 +57,17 @@ if player then
         end
     end
 
-    -- Hiện thông báo đầu tiên lâu hơn trước khi đếm ngược
-    label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
-    wait(5)  -- Giữ câu thông báo 5 giây
+    local function showInitialMessage(text, duration)
+        label.TextSize = 20
+        label.Text = text
+        wait(duration)
+    end
 
     coroutine.wrap(function()
+        -- Hiển thị message đầu tiên lâu hơn trước khi bắt đầu đếm ngược
+        showInitialMessage("🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience.", 5)
+
+        -- Bắt đầu đếm ngược
         for i = 180, 1, -1 do
             local milestoneText = milestoneEvents[i]
             if milestoneText then

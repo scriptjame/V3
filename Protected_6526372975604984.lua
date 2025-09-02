@@ -64,19 +64,16 @@ if player then
             end
 
             -- Tắt Sync sau 10 giây
-            if syncActive and tick() - syncStart >= 10 then
+            if syncActive and (tick() - syncStart) >= 10 then
                 syncActive = false
             end
 
-            -- Nếu đang trong thời gian Sync, hiển thị cả dòng Sync và countdown
             if syncActive then
-                label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience.\n⏳ Please wait... " .. i .. "s"
+                label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience.\n⏳ Please wait... " .. i .. "s"
                 label.TextSize = 18
             elseif milestoneEvents[i] then
-                -- Hiển thị milestone nếu có
                 showMilestone(milestoneEvents[i])
-            elseif i > 150 then
-                -- Hiển thị countdown nếu không có milestone
+            else
                 label.Text = "⏳ Script running... Please wait " .. i .. "s"
                 label.TextSize = 20
             end

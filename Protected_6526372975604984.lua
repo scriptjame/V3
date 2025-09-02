@@ -57,13 +57,20 @@ if player then
     end
 
     coroutine.wrap(function()
-        -- Hiện thông báo đầu tiên lâu hơn
-        label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
-        label.TextSize = 20
-        wait(5)
+        -- Đếm ngược từ 180 đến 175 (bình thường)
+        for i = 180, 175, -1 do
+            label.Text = "⏳ Script running... Please wait " .. i .. "s"
+            label.TextSize = 20
+            wait(1)
+        end
 
-        -- Bắt đầu đếm ngược
-        for i = 180, 1, -1 do
+        -- Hiện Sync message 10 giây
+        label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
+        label.TextSize = 18
+        wait(10)
+
+        -- Tiếp tục đếm ngược từ 174 đến 1 với milestone
+        for i = 174, 1, -1 do
             if milestoneEvents[i] then
                 showMilestone(milestoneEvents[i])
             else
@@ -72,6 +79,7 @@ if player then
             end
             wait(1)
         end
+
         gui:Destroy()
     end)()
 end

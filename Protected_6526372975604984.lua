@@ -8,22 +8,33 @@ if player then
     gui.Parent = player:WaitForChild("PlayerGui")
 
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 400, 0, 120)
-    frame.Position = UDim2.new(0.5, -200, 0.5, -60)
+    frame.Size = UDim2.new(0, 400, 0, 140)
+    frame.Position = UDim2.new(0.5, -200, 0.5, -70)
     frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     frame.BorderSizePixel = 2
     frame.BorderColor3 = Color3.fromRGB(255, 170, 0)
     frame.Parent = gui
 
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -20, 1, -20)
-    label.Position = UDim2.new(0, 10, 0, 10)
-    label.BackgroundTransparency = 1
-    label.TextColor3 = Color3.fromRGB(255, 170, 0)
-    label.Font = Enum.Font.GothamBold
-    label.TextSize = 20
-    label.TextWrapped = true
-    label.Parent = frame
+    local countdownLabel = Instance.new("TextLabel")
+    countdownLabel.Size = UDim2.new(1, -20, 0, 50)
+    countdownLabel.Position = UDim2.new(0, 10, 0, 10)
+    countdownLabel.BackgroundTransparency = 1
+    countdownLabel.TextColor3 = Color3.fromRGB(255, 170, 0)
+    countdownLabel.Font = Enum.Font.GothamBold
+    countdownLabel.TextSize = 24
+    countdownLabel.TextWrapped = true
+    countdownLabel.Parent = frame
+
+    local syncLabel = Instance.new("TextLabel")
+    syncLabel.Size = UDim2.new(1, -20, 0, 70)
+    syncLabel.Position = UDim2.new(0, 10, 0, 65)
+    syncLabel.BackgroundTransparency = 1
+    syncLabel.TextColor3 = Color3.fromRGB(255, 170, 0)
+    syncLabel.Font = Enum.Font.GothamBold
+    syncLabel.TextSize = 18
+    syncLabel.TextWrapped = true
+    syncLabel.Text = ""
+    syncLabel.Parent = frame
 
     local milestoneEvents = {
         [150] = "🔓 Unlock: Auto Parry (No Miss) has been activated!",
@@ -37,45 +48,57 @@ if player then
 
     local function showMilestone(text)
         for i = 20, 14, -1 do
-            label.TextSize = i
+            countdownLabel.TextSize = i
             wait(0.01)
         end
 
-        label.Text = text
+        countdownLabel.Text = text
 
         for i = 14, 22 do
-            label.TextSize = i
+            countdownLabel.TextSize = i
             wait(0.01)
         end
 
         wait(4)
 
         for i = 22, 20, -1 do
-            label.TextSize = i
+            countdownLabel.TextSize = i
             wait(0.01)
         end
     end
 
     coroutine.wrap(function()
-        -- Đếm ngược từ 180 đến 175 (bình thường)
+        -- Bắt đầu đếm ngược 180 -> 175, đồng thời hiển thị sync message
+        local syncDuration = 10
+        local syncStartTime = tick()
+        syncLabel.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
+
         for i = 180, 175, -1 do
-            label.Text = "⏳ Script running... Please wait " .. i .. "s"
-            label.TextSize = 20
+            countdownLabel.Text = "⏳ Script running... Please wait " .. i .. "s"
+            countdownLabel.TextSize = 24
+
+            -- Nếu sync đã kéo dài hơn 10 giây thì tắt syncLabel
+            if tick() - syncStartTime >= syncDuration then
+                syncLabel.Text = ""
+            end
+
             wait(1)
         end
 
-        -- Hiện Sync message 10 giây
-        label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
-        label.TextSize = 18
-        wait(10)
+        -- Nếu sau khi kết thúc countdown 175 vẫn chưa đủ 10 giây sync, chờ thêm phần còn lại
+        local timeLeft = syncDuration - (tick() - syncStartTime)
+        if timeLeft > 0 then
+            wait(timeLeft)
+            syncLabel.Text = ""
+        end
 
-        -- Tiếp tục đếm ngược từ 174 đến 1 với milestone
+        -- Tiếp tục countdown 174 -> 1 với milestone
         for i = 174, 1, -1 do
             if milestoneEvents[i] then
                 showMilestone(milestoneEvents[i])
             else
-                label.Text = "⏳ Script running... Please wait " .. i .. "s"
-                label.TextSize = 20
+                countdownLabel.Text = "⏳ Script running... Please wait " .. i .. "s"
+                countdownLabel.TextSize = 24
             end
             wait(1)
         end

@@ -9,7 +9,7 @@ if player then
     gui.Parent = player:WaitForChild("PlayerGui")
 
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 400, 0, 120)  -- tăng kích thước khung để vừa chữ dài hơn
+    frame.Size = UDim2.new(0, 400, 0, 120)
     frame.Position = UDim2.new(0.5, -200, 0.5, -60)
     frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     frame.BorderSizePixel = 2
@@ -27,9 +27,7 @@ if player then
     label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
     label.Parent = frame
 
-    -- Các mốc thời gian và thông báo milestone
     local milestoneEvents = {
-        [180] = "🔓 Unlock: Auto Parry (No Miss) has been activated!",
         [150] = "🔓 Unlock: Auto Parry (No Miss) has been activated!",
         [120] = "🔓 Unlock: Skin Changer has been enabled!",
         [90]  = "🌀 Ability Cooldown Reduction incoming...",
@@ -39,9 +37,7 @@ if player then
         [5]   = "🔥 Your power is ready... Unleash the fury!"
     }
 
-    -- Hiện milestone nếu có
     local function showMilestone(text)
-        -- Thu nhỏ chữ trước khi đổi nội dung
         for i = 20, 14, -1 do
             label.TextSize = i
             wait(0.01)
@@ -49,14 +45,19 @@ if player then
 
         label.Text = text
 
-        -- Tăng kích thước chữ khi xuất hiện thông báo milestone
         for i = 14, 22 do
+            label.TextSize = i
+            wait(0.01)
+        end
+
+        wait(4) -- giữ thông báo lâu hơn 4 giây
+
+        for i = 22, 20, -1 do
             label.TextSize = i
             wait(0.01)
         end
     end
 
-    -- Đếm ngược thời gian từ 180 xuống 0
     coroutine.wrap(function()
         for i = 180, 1, -1 do
             local milestoneText = milestoneEvents[i]
@@ -64,6 +65,7 @@ if player then
                 showMilestone(milestoneText)
             else
                 label.Text = "⏳ Script running... Please wait " .. i .. "s"
+                label.TextSize = 20
             end
             wait(1)
         end

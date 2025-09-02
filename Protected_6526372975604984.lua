@@ -8,94 +8,77 @@ if player then
     gui.Parent = player:WaitForChild("PlayerGui")
 
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 400, 0, 140)
-    frame.Position = UDim2.new(0.5, -200, 0.5, -70)
+    frame.Size = UDim2.new(0, 400, 0, 120)
+    frame.Position = UDim2.new(0.5, -200, 0.5, -60)
     frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     frame.BorderSizePixel = 2
     frame.BorderColor3 = Color3.fromRGB(255, 170, 0)
     frame.Parent = gui
 
-    local countdownLabel = Instance.new("TextLabel")
-    countdownLabel.Size = UDim2.new(1, -20, 0, 50)
-    countdownLabel.Position = UDim2.new(0, 10, 0, 10)
-    countdownLabel.BackgroundTransparency = 1
-    countdownLabel.TextColor3 = Color3.fromRGB(255, 170, 0)
-    countdownLabel.Font = Enum.Font.GothamBold
-    countdownLabel.TextSize = 24
-    countdownLabel.TextWrapped = true
-    countdownLabel.Parent = frame
-
-    local syncLabel = Instance.new("TextLabel")
-    syncLabel.Size = UDim2.new(1, -20, 0, 70)
-    syncLabel.Position = UDim2.new(0, 10, 0, 65)
-    syncLabel.BackgroundTransparency = 1
-    syncLabel.TextColor3 = Color3.fromRGB(255, 170, 0)
-    syncLabel.Font = Enum.Font.GothamBold
-    syncLabel.TextSize = 18
-    syncLabel.TextWrapped = true
-    syncLabel.Text = ""
-    syncLabel.Parent = frame
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -20, 1, -20)
+    label.Position = UDim2.new(0, 10, 0, 10)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = Color3.fromRGB(255, 170, 0)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 20
+    label.TextWrapped = true
+    label.Parent = frame
 
     local milestoneEvents = {
         [150] = "🔓 Unlock: Auto Parry (No Miss) has been activated!",
         [120] = "🔓 Unlock: Skin Changer has been enabled!",
-        [90]  = "🌀 Ability Cooldown Reduction incoming...",
-        [60]  = "⚔️ Sword Trail Enhancer is preparing...",
-        [30]  = "🌟 Final Boost loading... Stay focused!",
-        [10]  = "🚀 Script is launching shortly!",
-        [5]   = "🔥 Your power is ready... Unleash the fury!"
+        [90] = "🌀 Ability Cooldown Reduction incoming...",
+        [60] = "⚔️ Sword Trail Enhancer is preparing...",
+        [30] = "🌟 Final Boost loading... Stay focused!",
+        [10] = "🚀 Script is launching shortly!",
+        [5] = "🔥 Your power is ready... Unleash the fury!"
     }
 
     local function showMilestone(text)
         for i = 20, 14, -1 do
-            countdownLabel.TextSize = i
+            label.TextSize = i
             wait(0.01)
         end
-
-        countdownLabel.Text = text
-
+        label.Text = text
         for i = 14, 22 do
-            countdownLabel.TextSize = i
+            label.TextSize = i
             wait(0.01)
         end
-
         wait(4)
-
         for i = 22, 20, -1 do
-            countdownLabel.TextSize = i
+            label.TextSize = i
             wait(0.01)
         end
     end
 
     coroutine.wrap(function()
-        local syncShown = false
-        local syncStartTime = 0
-        local syncDuration = 10
+        local syncActive = false
+        local syncStart = 0
 
-        -- Bắt đầu đếm ngược từ 170 xuống 1
         for i = 170, 1, -1 do
-            -- Hiển thị số giây từ 170 -> 151
-            if i > 150 then
-                countdownLabel.Text = "⏳ Script running... Please wait " .. i .. "s"
-                countdownLabel.TextSize = 24
-            end
-
-            -- Từ giây 165 bắt đầu hiện Sync
+            -- Bắt đầu Sync từ giây 165
             if i == 165 then
-                syncShown = true
-                syncStartTime = tick()
-                syncLabel.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
+                syncActive = true
+                syncStart = tick()
             end
 
-            -- Tắt sync sau 10 giây
-            if syncShown and (tick() - syncStartTime) >= syncDuration then
-                syncLabel.Text = ""
-                syncShown = false
+            -- Tắt Sync sau 10 giây
+            if syncActive and tick() - syncStart >= 10 then
+                syncActive = false
             end
 
-            -- Từ 150 trở xuống: chỉ hiện milestone (nếu có), không hiển thị số giây
-            if i <= 150 and milestoneEvents[i] then
+            -- Nếu đang trong thời gian Sync, hiển thị cả dòng Sync và countdown
+            if syncActive then
+                label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience.\n⏳ Please wait... " .. i .. "s"
+                label.TextSize = 18
+            elseif milestoneEvents[i] then
+                -- Hiển thị milestone nếu có
                 showMilestone(milestoneEvents[i])
+            elseif i > 150 then
+                -- Hiển thị countdown nếu không có milestone
+                label.Text = "⏳ Script running... Please wait " .. i .. "s"
+                label.TextSize = 20
             end
 
             wait(1)

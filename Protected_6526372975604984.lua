@@ -2,16 +2,9 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 if player then
-    -- Xóa GUI cũ nếu có
-    local existingGui = player:FindFirstChild("PlayerGui"):FindFirstChild("CustomWaitGUI")
-    if existingGui then
-        existingGui:Destroy()
-    end
-
     local gui = Instance.new("ScreenGui")
     gui.Name = "CustomWaitGUI"
-    gui.ResetOnSpawn = true  -- Đổi thành true để tự động xoá khi respawn
-    gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    gui.ResetOnSpawn = false
     gui.Parent = player:WaitForChild("PlayerGui")
 
     local frame = Instance.new("Frame")
@@ -64,20 +57,13 @@ if player then
     end
 
     coroutine.wrap(function()
-        -- Đếm ngược 180 -> 175
-        for i = 180, 175, -1 do
-            label.Text = "⏳ Script running... Please wait " .. i .. "s"
-            label.TextSize = 20
-            wait(1)
-        end
-
-        -- Sync message 10 giây
+        -- Hiện thông báo đầu tiên lâu hơn
         label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
-        label.TextSize = 18
-        wait(10)
+        label.TextSize = 20
+        wait(5)
 
-        -- Đếm ngược tiếp từ 174 -> 1
-        for i = 174, 1, -1 do
+        -- Bắt đầu đếm ngược
+        for i = 180, 1, -1 do
             if milestoneEvents[i] then
                 showMilestone(milestoneEvents[i])
             else
@@ -86,7 +72,6 @@ if player then
             end
             wait(1)
         end
-
         gui:Destroy()
     end)()
 end

@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 if player then
-    -- Tạo GUI chính
     local gui = Instance.new("ScreenGui")
     gui.Name = "CustomWaitGUI"
     gui.ResetOnSpawn = false
@@ -57,21 +56,16 @@ if player then
         end
     end
 
-    local function showInitialMessage(text, duration)
-        label.TextSize = 20
-        label.Text = text
-        wait(duration)
-    end
-
     coroutine.wrap(function()
-        -- Hiển thị message đầu tiên lâu hơn trước khi bắt đầu đếm ngược
-        showInitialMessage("🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience.", 5)
+        -- Hiện thông báo đầu tiên lâu hơn
+        label.Text = "🔄 Syncing your data with the server to ensure fair play and smooth experience. Thanks for your patience."
+        label.TextSize = 20
+        wait(5)
 
         -- Bắt đầu đếm ngược
         for i = 180, 1, -1 do
-            local milestoneText = milestoneEvents[i]
-            if milestoneText then
-                showMilestone(milestoneText)
+            if milestoneEvents[i] then
+                showMilestone(milestoneEvents[i])
             else
                 label.Text = "⏳ Script running... Please wait " .. i .. "s"
                 label.TextSize = 20
